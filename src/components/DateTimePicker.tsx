@@ -149,7 +149,7 @@ export default function DateTimePickerPage() {
       <Card className="border shadow-sm">
         <CardHeader className="">
           <CardTitle className="text-2xl font-bold text-primary">
-            Reserva tu mesa para Antaño!
+            Haz una reserva para Antaño!
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-6">
@@ -315,7 +315,7 @@ export default function DateTimePickerPage() {
                     Procesando...
                   </>
                 ) : (
-                  "Reservar cita"
+                  "Realizar reserva"
                 )}
               </Button>
             </form>
