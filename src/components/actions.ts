@@ -23,12 +23,9 @@ export async function getUnavailableDates(){
         date: closedDays.date
     }).from(closedDays).then((res) => res.map((r) => r.date));
 
-     const specialDates = await db
-    .select({ date: specialSchedules.date })
-    .from(specialSchedules)
-    .then((res) => res.map((r) => r.date));
+  
 
-    const unavailableDates = Array.from(new Set([...closedDates, ...specialDates]));
+    const unavailableDates = Array.from(new Set([...closedDates]));
 
   return unavailableDates;
 }
