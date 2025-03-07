@@ -9,7 +9,10 @@ export const reservations = sqliteTable(
     date: text("date").notNull(),
     time: text("time").notNull(),
     customerName: text("customer_name"),
-    customerContact: text("customer_contact"),
+    customerLastName: text("customer_lastname").notNull(),
+    customerBirthDay: text("customer_birthday").notNull(),
+    customerContact: text("customer_contact").notNull(),
+    customerAllergy: text("customer_allergy"),
     status: text("status")
       .default("active")
       .notNull(),
