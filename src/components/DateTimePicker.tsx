@@ -38,7 +38,7 @@ import {
   Mail,
   Phone,
   User,
-  User2Icon,
+  Users2Icon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -58,9 +58,11 @@ const firstStepSchema = z.object({
   date: z.date({
     required_error: "Por favor selecciona una fecha.",
   }),
-  time: z.string({
-    required_error: "Por favor selecciona una hora.",
-  }),
+  time: z
+    .string({
+      required_error: "Por favor selecciona una hora.",
+    })
+    .min(1, "Por favor selecciona una hora."),
   peopleNr: z
     .string()
     .refine((v) => peopleNrReservation.some((n) => n.toString() === v), {
@@ -111,7 +113,7 @@ export default function ReservationForm() {
       time: "",
       peopleNr: "",
     },
-    mode: "onChange",
+    mode: "all",
   });
 
   // Separate form for second step
@@ -234,7 +236,7 @@ export default function ReservationForm() {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-3xl">
+    <div className="container mx-auto py-8 px-4 max-w-2xl">
       <Card className="border shadow-sm">
         <CardHeader className="">
           <CardTitle className="text-2xl font-bold text-primary">
@@ -381,7 +383,7 @@ export default function ReservationForm() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-2">
-                            <User2Icon className="h-4 w-4" />
+                            <Users2Icon className="h-4 w-4" />
                             Personas
                           </FormLabel>
                           <div className="relative">
@@ -429,16 +431,16 @@ export default function ReservationForm() {
                       Detalles de la reserva:
                     </h3>
                     <div className="grid grid-cols-3 gap-2 text-sm">
-                      <div>
-                        <span className="font-medium">Fecha:</span>{" "}
-                        {firstStepData.date.toLocaleDateString()}
+                      <div className="flex flex-col lg:flex-row justify-center items-center gap-1">
+                        <span className="font-medium text-center">Fecha: </span>{" "}
+                        {formateDate(firstStepData.date).split("2025")[0]}
                       </div>
-                      <div>
-                        <span className="font-medium">Hora:</span>{" "}
+                      <div className="flex flex-col lg:flex-row lg:justify-center items-center gap-1">
+                        <span className="font-medium">Hora: </span>{" "}
                         {firstStepData.time}
                       </div>
-                      <div>
-                        <span className="font-medium">Personas:</span>{" "}
+                      <div className="flex flex-col lg:flex-row lg:justify-center items-center gap-1">
+                        <span className="font-medium">Personas: </span>{" "}
                         {firstStepData.peopleNr}
                       </div>
                     </div>
@@ -459,7 +461,7 @@ export default function ReservationForm() {
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="Ingresa tu nombre"
+                            placeholder="Jimi"
                             disabled={isSubmitting}
                           />
                         </FormControl>
@@ -481,7 +483,7 @@ export default function ReservationForm() {
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="Ingresa tu apellido"
+                            placeholder="Hendrix"
                             disabled={isSubmitting}
                           />
                         </FormControl>
@@ -503,7 +505,7 @@ export default function ReservationForm() {
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="ejemplo@gmail.com"
+                            placeholder="ejem@gmail.com"
                             type="email"
                             disabled={isSubmitting}
                           />

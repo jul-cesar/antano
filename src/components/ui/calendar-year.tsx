@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { es } from "date-fns/locale";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
@@ -33,6 +34,7 @@ function CalendarYear({
 
   return (
     <DayPicker
+      locale={es}
       month={month}
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
@@ -81,13 +83,13 @@ function CalendarYear({
             >
               <SelectTrigger className="w-[110px]">
                 <SelectValue>
-                  {displayMonth.toLocaleString("default", { month: "long" })}
+                  {displayMonth.toLocaleString("es-ES", { month: "long" })}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {Array.from({ length: 12 }, (_, i) => (
                   <SelectItem key={i} value={i.toString()}>
-                    {new Date(0, i).toLocaleString("default", {
+                    {new Date(0, i).toLocaleString("es-ES", {
                       month: "long",
                     })}
                   </SelectItem>
