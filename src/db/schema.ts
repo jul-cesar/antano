@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { check, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { check, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 
 export const reservations = sqliteTable(
@@ -20,6 +20,7 @@ export const reservations = sqliteTable(
     attendanceTime: text("attendance_time"), // Hora de llegada del cliente
     updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
     createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
+    peopleNr: integer("peopleNr").notNull()
   },
   (table) => [
     

@@ -18,9 +18,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { peopleNrReservation } from "@/lib/constants";
 import { cn, formateDate } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarIcon, Check, Clock, Loader2, Mail, User } from "lucide-react";
+import {
+  CalendarIcon,
+  Check,
+  Clock,
+  Loader2,
+  Mail,
+  User,
+  User2Icon,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -44,6 +53,9 @@ const formSchema = z.object({
     .string()
     .min(2, "El nombre debe tener al menos 2 caracteres."),
   customerContact: z.string().email("Por favor ingresa un correo válido."),
+  peopleNr: z
+    .string()
+    .refine((v) => peopleNrReservation.some((n) => n.toString() === v)),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -119,6 +131,7 @@ export default function DateTimePickerPage() {
       await createReserva({
         ...data,
         date: formateDate(data.date),
+        peopleNr: parseInt(data.peopleNr),
       });
 
       // Mostrar mensaje de éxito
@@ -255,6 +268,40 @@ export default function DateTimePickerPage() {
                     )}
                   />
 
+                  <FormField
+                    control={form.control}
+                    name="peopleNr"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <User2Icon className="h-4 w-4" />
+                          Personas
+                        </FormLabel>
+                        <div className="relative">
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value && field.value?.toString()}
+                          >
+                            <FormControl>
+                              <SelectTrigger
+                                className={cn(isLoadingTimes && "opacity-70")}
+                              >
+                                <SelectValue placeholder="Selecciona número de personas" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {peopleNrReservation.map((n) => (
+                                <SelectItem value={n.toString()} key={n}>
+                                  {n}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   {/* Nombre del Cliente */}
                   <FormField
                     control={form.control}

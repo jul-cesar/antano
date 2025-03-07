@@ -1,6 +1,7 @@
 "use server"
 import { db } from "@/db";
 import { closedDays, InsertReservation, reservations, specialSchedules } from "@/db/schema";
+import { closeTimeConstant, openTimeConstant } from "@/lib/constants";
 import { eq } from "drizzle-orm";
 
 
@@ -50,8 +51,8 @@ export async function getAvailableTimes(date: string) {
     .where(eq(specialSchedules.date, date))
     .limit(1);
 
-  let openTime = "09:00";
-  let closeTime = "23:00";
+  let openTime = openTimeConstant;
+  let closeTime = closeTimeConstant;
 
   if (specialSchedule.length > 0) {
     openTime = specialSchedule[0].openTime;
