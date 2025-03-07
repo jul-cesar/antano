@@ -40,6 +40,7 @@ import {
   User,
   Users2Icon,
 } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import PhoneInputWithCountrySelect from "react-phone-number-input";
@@ -239,9 +240,18 @@ export default function ReservationForm() {
     <div className="container mx-auto py-8 px-4 max-w-2xl">
       <Card className="border shadow-sm">
         <CardHeader className="">
-          <CardTitle className="text-2xl font-bold text-primary">
+          <CardTitle className="text-2xl text-center font-bold  text-[#623928]">
             Haz una reserva para Antaño!
           </CardTitle>
+          <Image
+            className="mx-auto"
+            alt="Antaño Horno y Café logo."
+            width={120}
+            height={140}
+            src={
+              "https://instagram.fpei1-1.fna.fbcdn.net/v/t51.2885-19/473117456_1321427895544387_3209803347449756692_n.jpg?_nc_ht=instagram.fpei1-1.fna.fbcdn.net&_nc_cat=107&_nc_oc=Q6cZ2AG2avGVrlvG5WJl1UJD_DTj2LVd8qsc4bCxsosH0XFId8HO6_5Dk8qZbxFJOaDSlD_d5xzw1SwqEc1nNj3IFUcP&_nc_ohc=USWcrwODRIkQ7kNvgFrhgpU&_nc_gid=5805950dbb0242fbb67297d15471d5b9&edm=APoiHPcBAAAA&ccb=7-5&oh=00_AYF6V528VISz6Lf4Y8Mw7eIm-3JMTZIfU0U-RH7wwOE80g&oe=67D15DE5&_nc_sid=22de04"
+            }
+          />
         </CardHeader>
         <CardContent className="pt-6">
           {successMessage && (
