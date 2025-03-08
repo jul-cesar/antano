@@ -3,6 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Form,
   FormControl,
   FormField,
@@ -51,6 +59,7 @@ import {
   getAvailableTimes,
   getUnavailableDates,
 } from "./actions";
+import ThankYouScreen from "./AgradecimientoReserva";
 import { CalendarYear } from "./ui/calendar-year";
 
 // First step validation schema
@@ -99,6 +108,11 @@ export default function ReservationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showAgradecimientos, setShowAgradecimientos] = useState(false);
+  const [confirmationData, setConfirmationData] = useState<
+    (FirstStepValues & SecondStepValues) | null
+  >(null);
 
   // Store first step data separately
   const [firstStepData, setFirstStepData] = useState<FirstStepValues | null>(
@@ -186,31 +200,39 @@ export default function ReservationForm() {
     setCurrentStep(1);
   };
 
-  // Envío del formulario
-  const onSubmit = async (data: SecondStepValues) => {
+  // Preparar datos para el modal de confirmación
+  const handleShowConfirmation = async (data: SecondStepValues) => {
     if (!firstStepData) return;
+
+    // Combine data from both steps
+    const completeData = {
+      ...firstStepData,
+      ...data,
+    };
+
+    setConfirmationData(completeData);
+    setIsModalOpen(true);
+  };
+
+  // Envío del formulario después de confirmar
+  const handleConfirmReservation = async () => {
+    if (!confirmationData || !firstStepData) return;
 
     try {
       setIsSubmitting(true);
       setSuccessMessage(null);
 
-      // Combine data from both steps
-      const completeData = {
-        ...firstStepData,
-        ...data,
-      };
-
       await createReserva({
-        ...completeData,
+        ...confirmationData,
         date: formateDate(firstStepData.date),
         peopleNr: Number.parseInt(firstStepData.peopleNr),
-        customerBirthDay: formateDate(data.customerBirthDay),
+        customerBirthDay: formateDate(confirmationData.customerBirthDay),
       });
 
       // Mostrar mensaje de éxito
       setSuccessMessage(
         `¡Reserva confirmada para ${
-          data.customerName
+          confirmationData.customerName
         } el ${firstStepData.date.toLocaleDateString()} a las ${
           firstStepData.time
         }!`
@@ -219,11 +241,7 @@ export default function ReservationForm() {
       toast.success("Tu reserva ha sido confirmada correctamente");
 
       // Resetear formulario y volver al primer paso
-      firstStepForm.reset();
-      secondStepForm.reset();
-      setFirstStepData(null);
-      setTimeSlots([]);
-      setCurrentStep(1);
+      setShowAgradecimientos(true);
 
       // Actualizar fechas no disponibles
       const dates = await getUnavailableDates();
@@ -234,6 +252,33 @@ export default function ReservationForm() {
       setIsSubmitting(false);
     }
   };
+
+  if (showAgradecimientos) {
+    return (
+      <div className="container mx-auto py-8 px-4 max-w-2xl">
+        <ThankYouScreen
+          reservationDetails={{
+            customerContact: confirmationData?.customerContact ?? "",
+            customerLastName: confirmationData?.customerLastName ?? "",
+            customerName: confirmationData?.customerName ?? "",
+            date: formateDate(confirmationData?.date ?? 0),
+            peopleNr: confirmationData?.peopleNr ?? "",
+            time: confirmationData?.time ?? "",
+          }}
+          onNewReservation={() => {
+            setShowAgradecimientos(false);
+            firstStepForm.reset();
+            secondStepForm.reset();
+            setFirstStepData(null);
+            setTimeSlots([]);
+            setCurrentStep(1);
+            setIsModalOpen(false);
+            setConfirmationData(null);
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-2xl">
@@ -429,7 +474,7 @@ export default function ReservationForm() {
         ) : (
           <Form {...secondStepForm}>
             <form
-              onSubmit={secondStepForm.handleSubmit(onSubmit)}
+              onSubmit={secondStepForm.handleSubmit(handleShowConfirmation)}
               className="space-y-4"
             >
               {/* Resumen de la primera parte */}
@@ -666,19 +711,116 @@ export default function ReservationForm() {
                   className="flex-1"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Procesando...
-                    </>
-                  ) : (
-                    "Confirmar reserva"
-                  )}
+                  Revisar reserva
                 </Button>
               </div>
             </form>
           </Form>
         )}
+
+        {/* Modal de confirmación */}
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Confirmar reserva</DialogTitle>
+              <DialogDescription>
+                Por favor verifica que los datos de tu reserva sean correctos.
+              </DialogDescription>
+            </DialogHeader>
+            {confirmationData && firstStepData && (
+              <div className="space-y-4 py-4">
+                <div className="bg-muted p-4 rounded-md">
+                  <h3 className="font-medium mb-2 text-lg">
+                    Detalles de la reserva
+                  </h3>
+                  <div className="grid grid-cols-1 gap-3">
+                    <div className="flex justify-between">
+                      <span className="font-medium">Fecha:</span>
+                      <span>
+                        {firstStepData.date.toLocaleDateString("es-ES", {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium">Hora:</span>
+                      <span>{firstStepData.time}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium">Personas:</span>
+                      <span>{firstStepData.peopleNr}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-muted p-4 rounded-md">
+                  <h3 className="font-medium mb-2 text-lg">
+                    Información personal
+                  </h3>
+                  <div className="grid grid-cols-1 gap-3">
+                    <div className="flex justify-between">
+                      <span className="font-medium">Nombre completo:</span>
+                      <span>
+                        {confirmationData.customerName}{" "}
+                        {confirmationData.customerLastName}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium">Correo electrónico:</span>
+                      <span>{confirmationData.customerContact}</span>
+                    </div>
+                    {confirmationData.phone_number && (
+                      <div className="flex justify-between">
+                        <span className="font-medium">Teléfono:</span>
+                        <span>{confirmationData.phone_number}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="font-medium">Fecha de nacimiento:</span>
+                      <span>
+                        {confirmationData.customerBirthDay.toLocaleDateString()}
+                      </span>
+                    </div>
+                    {confirmationData.hasAllergy === "si" && (
+                      <div className="flex flex-col">
+                        <span className="font-medium">Alergias:</span>
+                        <span className="text-sm mt-1">
+                          {confirmationData.customerAllergy}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+            <DialogFooter className="flex sm:justify-between">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Volver al formulario
+              </Button>
+              <Button
+                type="button"
+                onClick={handleConfirmReservation}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Procesando...
+                  </>
+                ) : (
+                  "Confirmar reserva"
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
