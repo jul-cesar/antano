@@ -1,5 +1,8 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Check, Mail, Phone } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface ThankYouScreenProps {
   reservationDetails: {
@@ -25,6 +28,8 @@ export default function ThankYouScreen({
     customerLastName,
     customerContact,
   } = reservationDetails;
+
+  const Router = useRouter();
 
   return (
     <div className="mt-8 text-center">
@@ -73,12 +78,15 @@ export default function ThankYouScreen({
         </div>
       </div>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/">
-          <Button className="flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Volver al inicio
-          </Button>
-        </a>
+        <Button
+          className="flex items-center gap-2"
+          onClick={() => {
+            window.location.reload();
+          }}
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Volver al inicio
+        </Button>
       </div>
     </div>
   );
