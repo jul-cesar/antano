@@ -50,7 +50,7 @@ export default function ThankYouScreen({
             Resumen de tu reserva:
           </h3>
           <div className="text-sm text-gray-600 space-y-1">
-            <p>
+            <p className="flex flex-col items-center">
               <span className="font-medium">Fecha:</span> {date}
             </p>
             <p>
@@ -85,7 +85,7 @@ export default function ThankYouScreen({
           }}
         >
           <ArrowLeft className="h-4 w-4" />
-          Volver al inicio
+          Hacer una nueva reserva
         </Button>
       </div>
     </div>

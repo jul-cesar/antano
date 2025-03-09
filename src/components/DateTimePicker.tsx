@@ -730,7 +730,7 @@ export default function ReservationForm() {
             {confirmationData && firstStepData && (
               <div className="space-y-4 py-4">
                 <div className="bg-muted p-4 rounded-md">
-                  <h3 className="font-medium mb-2 text-lg">
+                  <h3 className="font-medium mb-3 text-center text-lg">
                     Detalles de la reserva
                   </h3>
                   <div className="grid grid-cols-1 gap-3">
@@ -757,7 +757,7 @@ export default function ReservationForm() {
                 </div>
 
                 <div className="bg-muted p-4 rounded-md">
-                  <h3 className="font-medium mb-2 text-lg">
+                  <h3 className="font-medium text-center mb-3 text-lg">
                     Información personal
                   </h3>
                   <div className="grid grid-cols-1 gap-3">
@@ -768,8 +768,8 @@ export default function ReservationForm() {
                         {confirmationData.customerLastName}
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium">Correo electrónico:</span>
+                    <div className="flex flex-col justify-between">
+                      <span className="font-medium">Email:</span>
                       <span>{confirmationData.customerContact}</span>
                     </div>
                     {confirmationData.phone_number && (
