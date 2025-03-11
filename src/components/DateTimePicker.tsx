@@ -34,7 +34,6 @@ import {
 import { peopleNrReservation } from "@/lib/constants";
 import { cn, formateDate } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
 import {
   ArrowLeft,
   ArrowRight,
@@ -672,7 +671,7 @@ export default function ReservationForm() {
                               )}
                             >
                               {field.value ? (
-                                format(field.value, "PPP")
+                                formateDate(field.value)
                               ) : (
                                 <span>Selecciona una fecha</span>
                               )}
